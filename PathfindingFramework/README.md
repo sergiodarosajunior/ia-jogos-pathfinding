@@ -1,12 +1,17 @@
-# Documentação: Framework Didático de Pathfinding (Godot 4)
+# Um Framework Didático para estudar Pathfinding (Godot 4)
 
 Bem-vindo ao framework base para exploração de Algoritmos de Busca em Espaço de Estados. Este projeto foi desenhado para separar completamente a visualização (o mapa), a modelagem matemática (o grafo) e o "raciocínio" da Inteligência Artificial (a busca). 
 
 Siga este guia para entender a arquitetura do projeto e como os conceitos teóricos se aplicam no código.
 
 ## Índice
-- [Documentação: Framework Didático de Pathfinding (Godot 4)](#documentação-framework-didático-de-pathfinding-godot-4)
+- [Um Framework Didático para estudar Pathfinding (Godot 4)](#um-framework-didático-para-estudar-pathfinding-godot-4)
   - [Índice](#índice)
+  - [Visão Geral da Arquitetura](#visão-geral-da-arquitetura)
+    - [1. Core - Representação do Mundo](#1-core---representação-do-mundo)
+    - [2. Core - Estrutura de Dados](#2-core---estrutura-de-dados)
+    - [3. Core - Busca e Algoritmos (A Inteligência)](#3-core---busca-e-algoritmos-a-inteligência)
+    - [4. Gerenciamento e UI (Godot)](#4-gerenciamento-e-ui-godot)
   - [1. O Ambiente Visual: `GridManager.gd`](#1-o-ambiente-visual-gridmanagergd)
     - [Como Funciona:](#como-funciona)
     - [O Ciclo de Animação:](#o-ciclo-de-animação)
@@ -24,6 +29,37 @@ Siga este guia para entender a arquitetura do projeto e como os conceitos teóri
     - [Dijkstra (Algoritmo de Custo Uniforme)](#dijkstra-algoritmo-de-custo-uniforme)
     - [Busca Gulosa (Greedy Best-First Search)](#busca-gulosa-greedy-best-first-search)
     - [A\* (A-Star)](#a-a-star)
+
+---
+
+## Visão Geral da Arquitetura
+
+Para garantir boas práticas de Engenharia de Software aplicadas a Jogos Digitais, nosso framework está dividido em módulos lógicos. Essa separação garante que a inteligência do agente não fique "suja" com códigos de desenho na tela, e que o mapa possa ser facilmente trocado sem alterar os algoritmos.
+
+![Diagrama de classes](img/FrameworkPathfinding.svg)
+
+A arquitetura está dividida em quatro pilares principais:
+
+### 1. Core - Representação do Mundo
+* **`GridGraph`**: Representa a matemática do cenário. Ele não sabe o que é um desenho, apenas conhece os limites (linhas/colunas), onde estão as colisões (`walls`) e os custos de movimentação. É ele quem responde à pergunta: *"Quais são os meus vizinhos válidos?"*.
+
+### 2. Core - Estrutura de Dados
+* **`SearchNode`**: A "migalha de pão". Guarda a posição atual, os custos ($G$ e $H$) e, crucialmente, uma referência ao nó "pai" para podermos reconstruir o caminho de volta.
+* **`PriorityQueue`**: Uma estrutura otimizada que garante que os algoritmos de IA sempre avaliem primeiro os caminhos mais baratos e promissores.
+
+### 3. Core - Busca e Algoritmos (A Inteligência)
+* **`SearchAlgorithm`**: A classe base abstrata. Contém o "motor" principal da busca (o laço `while`).
+
+* **`BFS` (Busca em Largura)**: Expande a fronteira igualmente para todos os lados usando uma Fila simples (FIFO).
+
+* **`Dijkstra`**: Evolução do BFS. Usa a Fila de Prioridade baseada no custo real ($G$) - _cost so far_ - para encontrar caminhos mais baratos.
+
+* **`Greedy` (Busca Gulosa)**: Usa a Fila de Prioridade baseada na estimativa até o alvo ($H$) para ser extremamente rápido.
+
+* **`AStar` (A*)**: O estado da arte. Une custo e estimativa ($F = G + H$) para encontrar o caminho perfeito de forma eficiente.
+
+### 4. Gerenciamento e UI (Godot)
+* **`GridManager`**: O "maestro" visual. Ele gerencia o input do mouse (para desenhar paredes e colocar o alvo), pinta a tela e executa a animação passo a passo da nossa IA em ação.
 
 ---
 
