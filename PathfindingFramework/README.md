@@ -99,7 +99,7 @@ Nesta modelagem:
 * **Vértice (Nó) = Estado:** Representa uma configuração específica do mundo. No nosso caso, é a coordenada (x, y) no grid.
 * **Aresta = Ação (Operador):** Representa a transição entre estados. É o “movimento” permitido. Adicionalmente, arestas podem ter **Custos** (ex: andar na grama vs. andar na água).
 
-> **[🖼️ INSERIR AQUI: Ilustração de um grafo de grid, mostrando os nós em cada célula e as arestas conectando Norte, Sul, Leste e Oeste]**
+![alt text](img/gridGraph.svg)
 
 ### A Implementação
 A abstração das conexões ocorre na função `get_neighbors()`. O algoritmo pergunta ao Grafo: *"Quais são os vizinhos válidos da célula atual?"*. O Grafo calcula os movimentos ortogonais e filtra aqueles que são obstáculos ou que estão fora dos limites da tela:
