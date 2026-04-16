@@ -6,7 +6,7 @@ var pq: PriorityQueue = PriorityQueue.new()
 # Função Heurística
 func heuristic(a: Vector2i, b: Vector2i) -> float:
 	# TODO 1: Implementar o cálculo da Distância Manhattan
-	return 0.0 
+	return abs(a.x - b.x) + abs(a.y - b.y)
 
 func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callback: Callable = Callable()) -> Array[Vector2i]:
 	frontier.clear()
@@ -17,6 +17,7 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 	
 	var start_node = SearchNode.new(start, null, 0.0)
 	# TODO 2: O nó inicial já precisa ter o h_cost calculado!
+	start_node.h_cost = heuristic(start, goal)
 	
 	_add_to_frontier(start_node)
 
@@ -44,7 +45,8 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 				var new_node = SearchNode.new(neighbor, current_node, 0.0)
 				
 				# TODO 3: Calcule o h_cost deste novo nó usando a heurística!
-				
+				new_node.h_cost = heuristic (neighbor, goal)
+
 				visited[neighbor] = new_node
 				_add_to_frontier(new_node)
 				
@@ -56,7 +58,7 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 
 func _add_to_frontier(node: SearchNode):
 	# TODO 4: Qual atributo do 'node' define a prioridade na Busca Gulosa?
-	# pq.put(node, ?????)
+	pq.put(node, node.h_cost)
 	pass
 
 func _get_from_frontier() -> SearchNode:

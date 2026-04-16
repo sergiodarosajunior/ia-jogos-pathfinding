@@ -30,16 +30,15 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 		for neighbor in graph.get_neighbors(current_node.cell):
 			
 			# TODO 1: Qual é o custo para dar este passo? (Assuma 1.0 por enquanto)
-			var step_cost = 0.0 # Substitua 0.0 pela lógica correta
+			var step_cost = 1.0 # Substitua 0.0 pela lógica correta
 			
 			# TODO 2: Como calculamos o novo custo acumulado (G)?
-			var new_g_cost = 0.0 # Substitua 0.0 pela lógica correta
+			var new_g_cost = step_cost + current_node.g_cost # Substitua 0.0 pela lógica correta
 			
 			# TODO 3: Qual é a condição dupla para explorar este vizinho no Dijkstra?
 			# Dica: Ou ele é inédito, ou achamos um caminho MAIS BARATO para ele!
-			var deve_explorar = false # Substitua 'false' pela condição correta
-			
-			if deve_explorar:
+						
+			if not visited.has(neighbor) or new_g_cost < visited[neighbor].g_cost:
 				var new_node = SearchNode.new(neighbor, current_node, new_g_cost)
 				visited[neighbor] = new_node
 				_add_to_frontier(new_node)
@@ -52,7 +51,7 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 
 func _add_to_frontier(node: SearchNode):
 	# TODO 4: Qual atributo do 'node' define a prioridade no Dijkstra?
-	# pq.put(node, ?????)
+	pq.put(node, node.g_cost)
 	pass
 
 func _get_from_frontier() -> SearchNode:

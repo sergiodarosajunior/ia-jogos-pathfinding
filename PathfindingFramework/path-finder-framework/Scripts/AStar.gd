@@ -6,7 +6,7 @@ var pq: PriorityQueue = PriorityQueue.new()
 # Função Heurística
 func heuristic(a: Vector2i, b: Vector2i) -> float:
 	# TODO 1: Implementar a Distância Manhattan (igual ao da Busca Gulosa)
-	return 0.0
+	return abs(a.x - b.x) + abs(a.y - b.y)
 
 func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callback: Callable = Callable()) -> Array[Vector2i]:
 	frontier.clear()
@@ -17,6 +17,7 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 	
 	var start_node = SearchNode.new(start, null, 0.0)
 	# TODO 2: O nó inicial também precisa ter o h_cost calculado!
+	start_node.h_cost = heuristic(start,goal)
 	
 	_add_to_frontier(start_node)
 	visited[start] = start_node
@@ -37,18 +38,17 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 			
 			# TODO 3: Qual é o custo para dar este passo? E qual o novo Custo Acumulado (G)?
 			# Dica: Igual ao do Dijkstra!
-			var step_cost = 0.0
-			var new_g_cost = 0.0
+			var step_cost = 1.0
+			var new_g_cost = current_node.g_cost + step_cost
 			
 			# TODO 4: Qual a condição para o A* explorar este vizinho?
 			# Dica: Ou ele é inédito, ou achamos um caminho MAIS BARATO para ele (Igual ao Dijkstra).
-			var deve_explorar = false 
-			
-			if deve_explorar:
+						
+			if not visited.has(neighbor) or new_g_cost < visited[neighbor].g_cost:
 				var new_node = SearchNode.new(neighbor, current_node, new_g_cost)
 				
 				# TODO 5: Calcule a estimativa (h_cost) deste novo nó para o alvo!
-				
+				new_node.h_cost = heuristic(neighbor,goal)
 				visited[neighbor] = new_node
 				_add_to_frontier(new_node)
 				
@@ -61,7 +61,7 @@ func solve(start: Vector2i, goal: Vector2i, tree: SceneTree = null, redraw_callb
 func _add_to_frontier(node: SearchNode):
 	# TODO 6: Qual atributo define a prioridade no A*? 
 	# Dica: O A* soma G + H. O 'SearchNode' já tem uma função pronta que retorna essa soma!
-	# pq.put(node, ?????)
+	pq.put(node, node.g_cost + node.h_cost)
 	pass
 
 func _get_from_frontier() -> SearchNode:

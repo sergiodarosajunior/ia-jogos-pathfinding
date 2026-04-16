@@ -15,8 +15,8 @@ var color_explored = Color("#add8e6", 0.6) # Azul claro (Nós já processados)
 var color_frontier = Color("#ffff99", 0.6) # Amarelo claro (Fronteira)
 var color_path = Color("#ffd700")          
 
-var start_pos: Vector2i = Vector2i(2, 2)
-var goal_pos: Vector2i = Vector2i(35, 20)
+var start_pos: Vector2i = Vector2i(0, 13)
+var goal_pos: Vector2i = Vector2i(11, 1)
 var walls: Dictionary = {}
 
 var path: Array[Vector2i] = []

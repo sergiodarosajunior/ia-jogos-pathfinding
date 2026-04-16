@@ -4,9 +4,9 @@
 
 [node name="GridManager" type="Node2D" unique_id=1537717183]
 script = ExtResource("1_xkofd")
-rows = 10
-cols = 10
-tile_size = 50
+rows = 15
+cols = 15
+tile_size = 40
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1446973938]
 

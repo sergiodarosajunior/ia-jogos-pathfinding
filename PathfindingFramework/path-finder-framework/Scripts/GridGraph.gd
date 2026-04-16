@@ -15,7 +15,10 @@ func _init(_cols: int, _rows: int, _walls: Dictionary):
 func get_neighbors(cell: Vector2i) -> Array[Vector2i]:
 	var neighbors: Array[Vector2i] = []
 	# Direções ortogonais (sem diagonal por enquanto, para simplificar)
-	var directions = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
+	var directions = [Vector2i.RIGHT,Vector2i.LEFT,Vector2i.UP,Vector2i.DOWN] # E W N S
+	# var directions = [Vector2i.LEFT,Vector2i.RIGHT,Vector2i.UP,Vector2i.DOWN] # W E N S
+	# see "Ugly paths" section for an explanation:
+	# if (cell.x + cell.y) % 2 == 0: directions.reverse() # S N W E
 
 	for dir in directions:
 		var next_cell = cell + dir
