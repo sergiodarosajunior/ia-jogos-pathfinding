@@ -55,7 +55,7 @@ Exibe o nome da cobra acima do agente com `TextMeshPro`.
 
 ---
 
-## 🤖 Bots Implementados
+## Bots Implementados
 
 ### Dummy.cs
 
@@ -69,14 +69,14 @@ Exibe o nome da cobra acima do agente com `TextMeshPro`.
 
 ---
 
-## 🚀 Como Criar um Novo Bot
+## Como Criar um Novo Bot
 
 1. Crie um novo script `C#` derivado de `AIBehaviour`.
 2. Implemente os métodos `Init()` e `Execute()`.
 3. Registre como um `ScriptableObject` com `[CreateAssetMenu]`.
 4. Associe no editor Unity à cobra desejada via `SnakeMovement.SetBehaviour()`.
 
-### 🐍 Como instanciar cobras no código
+### Como instanciar cobras no código
 
 No script `GameLogic.cs`, a criação de novas cobrinhas é feita com `Instantiate`:
 
@@ -119,7 +119,7 @@ playerSnake.GetComponentInChildren<SnakeMovement>().selected = true;
 
 ---
 
-## 📦 Repositório Original
+## Repositório Original
 
 [https://github.com/fellowsheep/IA2022-2](https://github.com/fellowsheep/IA2022-2)
 
