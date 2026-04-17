@@ -1,146 +1,138 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameLogic : MonoBehaviour
 {
-    public List<GameObject> snakes = new List<GameObject>();
+    [Header("Settings")]
+    public int poolSize = 500;
+    public float orbLifetime = 30f;
+    public float orbSpawnInterval = 2f;
+    public int orbsPerSpawn = 5;
+    public int nSnakes = 50;
+
+    [Header("Prefabs & References")]
+    public GameObject orbPreFab;
+    public GameObject snakePrefab;
     public List<AIBehaviour> behaviors = new List<AIBehaviour>();
 
-    public int OrbsPerSnake, NumberSnakes;
-    public float OrbSpawnTime;
-    public GameObject orbPreFab;
+    [Header("Runtime Data")]
+    public List<GameObject> snakes = new List<GameObject>();
+    // Esta é a lista que os alunos usarão para a Tomada de Decisão
+    public List<GameObject> orbPool = new List<GameObject>();
 
-    float minX, minY, maxX, maxY;
-    int selectedId;
+    private float minX, minY, maxX, maxY;
+    private int selectedId;
 
-    // Start is called before the first frame update
-    public GameObject snakePrefab;
     void Start()
     {
-        selectedId = 0;
-        BoxCollider2D col = GetComponent<BoxCollider2D>();
+        SetupBounds();
+        InitializeOrbPool();
+        SpawnInitialSnakes();
 
+        StartCoroutine(PoolSpawnRoutine());
+    }
+
+    void SetupBounds()
+    {
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
         minX = col.bounds.min.x;
         minY = col.bounds.min.y;
         maxX = col.bounds.max.x;
         maxY = col.bounds.max.y;
-
-
-        // Cria 5 SnakeBots em posições aleatórias
-        //aqui depois vai precisar da lista dos behaviours que vai carregar da pasta de recursos e
-        // provelmente spawnar um por behaviour presente na pasta e alocar como behaviour
-        for (int i = 0; i < NumberSnakes; i++)
-        {
-            //Vector3 randomPosition = new Vector3(Random.Range(-50.0f, 50.0f), Random.Range(-50.0f, 50.0f), 0.0f);
-            Vector3 randomPosition;
-            if (i == selectedId)
-            {
-                randomPosition = new Vector3(0.0f,0.0f,0.0f);
-            }
-            else
-            {
-                randomPosition = new Vector3(
-                Random.Range(
-                   minX, maxX
-                ),
-                Random.Range(
-                    minY, maxY
-                ),
-                0
-            );
-            }
- 
-            GameObject newSnake = Instantiate(snakePrefab, randomPosition, Quaternion.identity) as GameObject;
-            newSnake.name = "SnakeBot" + i.ToString();
-
-            snakes.Add(newSnake);
-
-            if (i == selectedId)
-            {
-                snakes[i].GetComponentInChildren<SnakeMovement>().SetBehaviour(behaviors[1]);
-            }
-            else
-            {
-                snakes[i].GetComponentInChildren<SnakeMovement>().SetBehaviour(behaviors[0]);
-            }
-        }
-        snakes[selectedId].GetComponentInChildren<SnakeMovement>().selected = true;
-       
-        StartCoroutine("SpawnXOrbsEveryYSeconds", OrbSpawnTime);
     }
 
-    // Update is called once per frame
+    // Criamos todos os orbes no início, desativados
+    void InitializeOrbPool()
+    {
+        GameObject orbParent = new GameObject("OrbPool");
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject obj = Instantiate(orbPreFab);
+            obj.transform.parent = orbParent.transform;
+            obj.SetActive(false);
+            orbPool.Add(obj);
+        }
+    }
+
+    IEnumerator PoolSpawnRoutine()
+    {
+        while (true)
+        {
+            for (int i = 0; i < orbsPerSpawn; i++)
+            {
+                ActivateOrbFromPool();
+            }
+            yield return new WaitForSeconds(orbSpawnInterval);
+        }
+    }
+
+    void ActivateOrbFromPool()
+    {
+        // Busca o primeiro objeto inativo no pool
+        GameObject orb = orbPool.FirstOrDefault(o => !o.activeInHierarchy);
+
+        if (orb != null)
+        {
+            orb.transform.position = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
+            orb.SetActive(true);
+            // Inicia o "timer" de desativação centralizado
+            StartCoroutine(DeactivateOrbAfterTime(orb, orbLifetime));
+        }
+    }
+
+    IEnumerator DeactivateOrbAfterTime(GameObject orb, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (orb != null && orb.activeInHierarchy)
+        {
+            orb.SetActive(false);
+        }
+    }
+
+    // Método para ser chamado pelo SnakeMovement.cs em vez de Destroy()
+    public void CollectOrb(GameObject orb)
+    {
+        orb.SetActive(false);
+    }
+
+    void SpawnInitialSnakes()
+    {
+        // Lógica original de spawn de cobras mantida e adaptada
+        for (int i = 0; i < nSnakes; i++)
+        {
+            Vector3 pos = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
+            GameObject newSnake = Instantiate(snakePrefab, pos, Quaternion.identity);
+            newSnake.name = "SnakeBot_" + i;
+
+            // Atribui comportamento (ex: Dummy)
+            newSnake.GetComponentInChildren<SnakeMovement>().SetBehaviour(behaviors[0]);
+            snakes.Add(newSnake);
+        }
+
+        if (snakes.Count > 0)
+        {
+            snakes[0].GetComponentInChildren<SnakeMovement>().SetBehaviour(behaviors[1]);
+            snakes[0].GetComponentInChildren<SnakeMovement>().selected = true;
+        }
+    }
+
     void Update()
     {
-        //verifica se alguém morreu para remover da lista
-        for (int i = 0; i < snakes.Count; i++)
-        {
-            if (snakes[i].GetComponentInChildren<SnakeMovement>().isDead)
-            {
-                Destroy(snakes[i]);
-                snakes.RemoveAt(i);
-                Debug.Log("Morreu a Snake " + i.ToString());
-
-                if (i == selectedId) //a priori deve sempre sobrar 1 cobrinha (a menos que as duas últimas colidam de cabeça)
-                {
-                    selectedId = 0;
-                }
-           
-            }
-        }
         CheckInput();
-    }
-
-    IEnumerator SpawnXOrbsEveryYSeconds(float timeBetweenSpawns)
-    {
-        yield return new WaitForSeconds(timeBetweenSpawns);
-        StopCoroutine("SpawnXOrbsEveryYSeconds");
-
-        for (int i = 0; i < OrbsPerSnake * snakes.Count; ++i)
-        {
-            Vector3 randomOrbPos = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
-            GameObject newOrb = Instantiate(orbPreFab, randomOrbPos, Quaternion.identity);
-            GameObject orbParent = GameObject.Find("Orbs");
-            newOrb.transform.parent = orbParent.transform;
-        }
-
-        StartCoroutine("SpawnXOrbsEveryYSeconds", OrbSpawnTime);
-
     }
 
     void CheckInput()
     {
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            selectNext();
-        }
-        
-        if(Input.GetKeyDown(KeyCode.Q))
-        {
-            selectPrevious();
-        }
+        if (Input.GetKeyDown(KeyCode.E)) SelectSnake(1);
+        if (Input.GetKeyDown(KeyCode.Q)) SelectSnake(-1);
     }
 
-    
-
-    void selectPrevious()
+    void SelectSnake(int step)
     {
         snakes[selectedId].GetComponentInChildren<SnakeMovement>().selected = false;
-        if (selectedId > 0) selectedId--;
-        else selectedId = snakes.Count - 1;
+        selectedId = (selectedId + step + snakes.Count) % snakes.Count;
         snakes[selectedId].GetComponentInChildren<SnakeMovement>().selected = true;
-        Debug.Log("SELECTED ID = " + selectedId.ToString());
-
     }
-
-    void selectNext()
-    {
-            snakes[selectedId].GetComponentInChildren<SnakeMovement>().selected = false;
-            selectedId = (selectedId + 1) % snakes.Count;
-            snakes[selectedId].GetComponentInChildren<SnakeMovement>().selected = true;
-            Debug.Log("SELECTED ID = " + selectedId.ToString());
-
-    }
-    
 }

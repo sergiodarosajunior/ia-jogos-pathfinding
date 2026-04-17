@@ -621,7 +621,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Scripts
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -631,7 +631,7 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 78
   m_LastFolders:
-  - Assets
+  - Assets/Scripts
   m_LastFoldersGridSize: 78
   m_LastProjectPath: C:\Users\fello\Documents\Github\IA-20261\AISnakeBot2026
   m_LockTracker:
@@ -640,12 +640,12 @@ MonoBehaviour:
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs:
-    - m_Data: 33084
+    - m_Data: 33684
     m_LastClickedID:
-      m_Data: 33084
+      m_Data: 33684
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 33084
+    - m_Data: 33590
     - m_Data: 1000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -679,7 +679,7 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 33084
+    - m_Data: 33590
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -837,7 +837,7 @@ MonoBehaviour:
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -1354
+      - m_Data: -3304
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1631,10 +1631,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: -0.8
-    y: 499.2
-    width: 1159
-    height: 267.4
+    x: 0
+    y: 435.2
+    width: 1171
+    height: 334.8
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0

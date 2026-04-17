@@ -36,7 +36,8 @@ public class SnakeMovement : MonoBehaviour
             Debug.Log("Speed is " + speed.ToString());
             if (Input.GetMouseButtonDown(0))
             {
-                Dash();
+                // Tem algo errado aqui ainda!
+                //Dash();
             }
         }
     }
@@ -50,16 +51,15 @@ public class SnakeMovement : MonoBehaviour
     
     void FixedUpdate()
     {
-       
-        behave.Execute();
+
+        if (isDead) return; // Interrompe qualquer movimento se estiver morta
+
+        if (behave != null)
+            behave.Execute();
 
         if (selected)
-        {
             CameraFollow();
-            
-        }
-
-      
+    
     }
 
     public bool isRunning = false;
@@ -78,28 +78,34 @@ public class SnakeMovement : MonoBehaviour
     public Transform bodyObject;
     void OnTriggerEnter2D(Collider2D other)
     {
-  
+
         if (other.gameObject.transform.tag == "Body")
         {
-          
             if (transform.parent.name != other.gameObject.transform.parent.name)
             {
                 isDead = true;
-                    for (int i = 0; i < bodyParts.Count; i++)
-                    {
-                        Destroy(bodyParts[i].gameObject);
-                        Destroy(bodyParts[i]);
-                    }
-                    //Destroy(this.gameObject);
 
+                // Destruir partes do corpo
+                for (int i = 0; i < bodyParts.Count; i++)
+                {
+                    if (bodyParts[i] != null) Destroy(bodyParts[i].gameObject);
+                }
+
+                // Destruir o objeto da cabeça e o objeto pai (container)
+                // Isso impede que a cabeça continue andando
+                Destroy(transform.parent.gameObject);
             }
-           
         }
 
         if (other.transform.tag == "Orb")
         {
 
-            Destroy(other.gameObject);
+            GameLogic logic = Object.FindFirstObjectByType<GameLogic>();
+
+            if (logic != null)
+            {
+                logic.CollectOrb(other.gameObject);
+            }
 
             //Adiciona uma parte do corpo no final
             Vector3 currentPos;
